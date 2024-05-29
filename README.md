@@ -1,1 +1,2 @@
-# qtom
+# Qtom
+Qtom merupakan program quiz
