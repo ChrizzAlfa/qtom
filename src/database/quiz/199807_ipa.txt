@@ -1,0 +1,3 @@
+531498
+Apakah bumi itu bulat?;Tidak;Iya;Mungkin;Kurang tahu;A
+Apakah api itu panas?;Iya;Tidak;Mungkin;Kurang tau;A

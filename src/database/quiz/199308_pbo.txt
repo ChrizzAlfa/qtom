@@ -1,0 +1,3 @@
+902032
+Apa itu enkasulapsi;Tau;Kurang tau;Mungkin tau;Tidak tau;B
+Apa itu inheritance?;Tau;Kurang tau;Mungkin tau;Tidak tau;A

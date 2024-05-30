@@ -1,0 +1,3 @@
+11221059;ipa 100;metik 100;pbo 100
+11231077;ipa 100;pbo 0;metik 50
+11231088;ipa 100;pbo 100;metik 100
