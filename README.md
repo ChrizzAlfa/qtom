@@ -1,2 +1,2 @@
 # Qtom
-Qtom merupakan program quiz dengan game interaktif
+Qtom merupakan program kuis custom dengan pendekatan game interaktif
