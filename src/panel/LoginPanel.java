@@ -7,6 +7,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.BorderFactory;
 import javax.swing.JTextField;
+
+import handler.UserHandler;
+
 import javax.swing.JPasswordField;
 
 import java.awt.Font;
@@ -16,12 +19,6 @@ import java.awt.Insets;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-
-import java.util.HashMap;
 import java.util.Map;
 
 public class LoginPanel extends JPanel {
@@ -32,7 +29,10 @@ public class LoginPanel extends JPanel {
     JTextField usernameField;
     JPasswordField passwordField;
     JButton loginButton;
+    String studentCredPath, teacherCredPath;
     Map<String, String> studentCred, teacherCred;
+
+    UserHandler userHandler = new UserHandler();
 
     public LoginPanel(JFrame window) {
 
@@ -45,8 +45,12 @@ public class LoginPanel extends JPanel {
         setFocusable(true);
 
         // Initialize the user credentials map
-        studentCred = loadUserCredentials("src/database/credentials/student_cred.txt");
-        teacherCred = loadUserCredentials("src/database/credentials/teacher_cred.txt");
+        studentCredPath = "src/database/credentials/student_cred.txt";
+        teacherCredPath = "src/database/credentials/teacher_cred.txt";
+
+        studentCred = userHandler.loadUserCredentials(studentCredPath);
+        teacherCred = userHandler.loadUserCredentials(teacherCredPath);
+
         loginTitle = new JLabel("LOGIN");
         usernameField = new JTextField(15);
         loginButton = new JButton("Login");
@@ -70,86 +74,27 @@ public class LoginPanel extends JPanel {
         panelSettings.addComponent(0, 5, 0, loginButton, new Font("Arial", Font.BOLD, 14), Color.WHITE, null);
     }
 
-    private Map<String, String> loadUserCredentials(String filePath) {
-        Map<String, String> credentials = new HashMap<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(";");
-                if (parts.length == 3) {
-                    String username = parts[1];
-                    String password = parts[2];
-                    credentials.put(username, password);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return credentials;
-    }
-
     private class LoginListener implements java.awt.event.ActionListener {
         public void actionPerformed(ActionEvent e) {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
 
             if (studentCred.containsKey(username) && studentCred.get(username).equals(password)) {
-                String studentID = getStudentID(username);
+                String studentID = userHandler.getStudentID(username);
                 if (studentID != null) {
-                    writeCurrentUser("src/database/current_user.txt", studentID);
+                    userHandler.writeCurrentUser("src/database/current_user.txt", studentID);
                     switchToStudentPanel();
                     System.out.println(studentCred);
                 }
             } else if (teacherCred.containsKey(username) && teacherCred.get(username).equals(password)) {
-                String teacherID = getTeacherID(username);
+                String teacherID = userHandler.getTeacherID(username);
                 if (teacherID != null) {
-                    writeCurrentUser("src/database/current_user.txt", teacherID);
+                    userHandler.writeCurrentUser("src/database/current_user.txt", teacherID);
                     switchToTeacherPanel();
                     System.out.println(teacherCred);
                 }
             } else {
                 JOptionPane.showMessageDialog(LoginPanel.this, "Incorrect username or password");
-            }
-        }
-
-        private String getStudentID(String username) {
-            try (BufferedReader reader = new BufferedReader(new FileReader("src/database/credentials/student_cred.txt"))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    String[] parts = line.split(";");
-                    if (parts.length == 3 && parts[1].equals(username)) {
-                        return parts[0]; // Return the student ID
-                    }
-                }
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(LoginPanel.this, "Error occurred while reading student credentials!");
-                ex.printStackTrace();
-            }
-            return null;
-        }
-
-        private String getTeacherID(String username) {
-            try (BufferedReader reader = new BufferedReader(new FileReader("src/database/credentials/teacher_cred.txt"))) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    String[] parts = line.split(";");
-                    if (parts.length == 3 && parts[1].equals(username)) {
-                        return parts[0]; // Return the teacher ID
-                    }
-                }
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(LoginPanel.this, "Error occurred while reading teacher credentials!");
-                ex.printStackTrace();
-            }
-            return null;
-        }
-
-        private void writeCurrentUser(String filePath, String userID) {
-            try (FileWriter writer = new FileWriter(filePath)) {
-                writer.write(userID);
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(LoginPanel.this, "Error occurred while writing current user ID!");
-                ex.printStackTrace();
             }
         }
 
